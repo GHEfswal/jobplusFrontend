@@ -1,18 +1,17 @@
 import React from "react";
-import Nav from "../components/nav/nav";
 import Container from "../components/container/container";
 import Cookie from "../components/cookie/cookie";
 import Footer from "../components/footer/footer";
-import Register from "../components/register/register";
+import ResetPassword from "../components/reset_password/reset_password";
 import HeroSimple from "../components/hero/hero_simple";
 
-export default function HomePage() {
+export default function ResetPasswordPage() {
   return (
     <>
       <section>
-        <HeroSimple title="Register" />
+        <HeroSimple title="Reset Password" />
         <Container>
-          <Register />
+          <ResetPassword />
         </Container>
         <Cookie />
       </section>

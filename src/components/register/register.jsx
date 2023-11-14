@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/form.scss";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { parseErrors } from "../../utils/parseErrors";
 import Alert from "../alert/alert";
+import { useApi } from "../../hooks/useApi";
+
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import axios from "axios";
 
 export default function register() {
   const [firstName, setFirstName] = useState("");
@@ -13,46 +16,38 @@ export default function register() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [alert, setAlert] = useState({});
+  const [phoneNumber, setPhoneNumber] = useState();
+  const [country, setCountry] = useState("");
+
+  console.log("phone number", phoneNumber);
+
+  const { post } = useApi();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // prevents entire page from reloading after trigerring Submit
-    /*
-    console.log("Submitted Successfully");
-    console.log("");
-    console.log("firstName:", firstName);
-    console.log("lastName:", lastName);
-    console.log("email:", email);
-    console.log("password:", password);
-    console.log("confirmPassword:", confirmPassword);
-*/
+
     //check if password and confirm password match
     if (password !== confirmPassword) {
       setAlert({
         message: "Password and Confirm Password do not match",
         details: [],
       });
-      return; //ecit early
+      return; //exit early
     }
 
     const data = {
       firstName: firstName,
       lastName: lastName,
+      phoneNumber: phoneNumber,
       email: email,
       password: password,
       username: email,
     };
 
-    try {
-      const res = await axios.post(
-        "http://localhost:1337/api/auth/local/register",
-        data
-      );
-      console.log(res);
-
-      //clear form happens after submit is successful
-
+    const handleSuccess = () => {
       setFirstName("");
       setLastName("");
+      setPhoneNumber();
       setEmail("");
       setPassword("");
       setConfirmPassword("");
@@ -61,18 +56,34 @@ export default function register() {
         details: [],
         type: "success",
       });
-    } catch (error) {
-      // console.error("Error in posting data", error);
-      // console.error("Error in posting data", error.response.data.error);
-      // console.log(parseErrors(error));
-      setAlert(parseErrors(error));
-      // console.log(error);
+    };
+
+    await post("auth/local/register", {
+      data: data,
+      onSuccess: () => handleSuccess(),
+      onFailure: (error) => setAlert(error),
+    });
+  };
+
+  const getUserLocation = async () => {
+    try {
+      const response = await axios.get("https://ipapi.co/json/");
+      console.log("location", response?.data);
+      setCountry(response?.data?.country_code);
+    } catch (e) {
+      console.error;
     }
   };
 
+  useEffect(() => {
+    getUserLocation();
+  }, [country]);
+
+  console.log(country);
+
   return (
     <>
-      <Alert /*type="error"*/ data={alert} />
+      <Alert data={alert} />
 
       <form className="form form--page" onSubmit={(e) => handleSubmit(e)}>
         <div className="form__group form__group--page">
@@ -94,6 +105,18 @@ export default function register() {
             placeholder="Last name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+          />
+        </div>
+
+        <div className="form__group form__group--page">
+          <label className="form__label">Phone Number</label>
+          <PhoneInput
+            className="PhoneInputInput"
+            placeholder="Enter phone number"
+            value={phoneNumber}
+            onChange={setPhoneNumber}
+            limitMaxLength={true}
+            defaultCountry={country}
           />
         </div>
 
