@@ -36,14 +36,22 @@ export default function listings() {
     fetchJobs();
   }, []);
 
-  console.log(jobs);
-  console.log(meta);
+  const handlePageChange = (pageNumber) => {
+    fetchJobs(pageNumber);
+  };
+
+  // console.log(jobs);
+  // console.log(meta?.paginate?.totalPages);
+  // const total = meta?.paginate?.totalPages;
+
+  // console.log(Array.from({ length: total }));
+  console.log();
 
   return (
     <section>
       {jobs.map((job) => {
         return (
-          <div className="listing__card">
+          <div key={job.id} className="listing__card">
             <header className="listing__header">
               <h1 className="listing__title">{job.title}</h1>
               <img className="listing__saved" src={StarSaved} alt="" />
@@ -77,7 +85,7 @@ export default function listings() {
           </div>
         );
       })}
-      <Paginate />
+      <Paginate meta={meta.paginate} onPageChange={handlePageChange} />
     </section>
   );
 }
