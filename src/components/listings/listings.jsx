@@ -42,13 +42,26 @@ export default function listings() {
     });
   };
 
-  const truncate = (text) => {
-    const shouldTruncate = text.length > MAX_LENGTH_CHARS;
+  const truncate = (text, jobId) => {
+    const job = jobs.find((job) => job.id === jobId);
+
+    const shouldTruncate = text.length > MAX_LENGTH_CHARS && job?.isTruncated;
     if (!shouldTruncate) return text;
 
     const truncated = text.slice(0, MAX_LENGTH_CHARS);
     // return elipsis if text is truncated
     return truncated + "...";
+  };
+
+  const toggleTruncate = (jobId) => {
+    const updatedJobs = jobs.map((job) => {
+      if (job.id === jobId) {
+        return { ...job, isTruncated: !job.isTruncated };
+      }
+      return job;
+    });
+
+    setJobs(updatedJobs);
   };
 
   useEffect(() => {
@@ -100,7 +113,10 @@ export default function listings() {
             </ul>
 
             <p className="listing__detail">
-              {truncate(job.description)} <b>Read more</b>
+              {truncate(job.description, job.id)}
+              <a onClick={() => toggleTruncate(job.id)}>
+                <b>{job.isTruncated ? "Read More" : "Real Less"}</b>
+              </a>
             </p>
 
             <a href="" className="listing__cta">
