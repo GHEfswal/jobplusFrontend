@@ -14,6 +14,8 @@ const MAX_LENGTH_CHARS = 200;
 export default function listings() {
   const [jobs, setJobs] = useState([]);
   const [meta, setMeta] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [jobToSave, setJobToSave] = useState(null);
 
   const { get } = useApi();
 
@@ -65,6 +67,20 @@ export default function listings() {
     setJobs(updatedJobs);
   };
 
+  const showModal = (job) => {
+    setJobToSave(job);
+    setIsModalOpen(true);
+  };
+
+  const hideModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const acceptModal = () => {
+    console.log("Accept save the job:", jobToSave);
+    hideModal();
+  };
+
   useEffect(() => {
     fetchJobs();
   }, []);
@@ -83,9 +99,11 @@ export default function listings() {
   return (
     <>
       <ConfirmationModal
-        isOpen={true}
-        onClose={() => {}}
-        onAccept={() => {}}
+        isOpen={isModalOpen}
+        // onClose={() => {}}
+        onClose={hideModal}
+        // onAccept={() => {}}
+        onAccept={acceptModal}
         text="You are about to save this job.Are you sure?"
       />
       <section>
@@ -94,7 +112,14 @@ export default function listings() {
             <div key={job.id} className="listing__card">
               <header className="listing__header">
                 <h1 className="listing__title">{job.title}</h1>
-                <img className="listing__saved" src={StarUnSaved} alt="" />
+
+                <img
+                  className="listing__saved"
+                  src={StarUnSaved}
+                  onClick={() => showModal(job)}
+                  alt=""
+                />
+
                 <p className="listing__company">
                   Posted by <span>{job.company.name}</span>
                 </p>
