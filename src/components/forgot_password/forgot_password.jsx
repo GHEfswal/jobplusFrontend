@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../styles/form.scss";
 import Alert from "../alert/alert";
 import { useApi } from "../../hooks/useApi";
+import authService from "../../services/AuthService";
 
 export default function forgot_password() {
   const [email, setEmail] = useState("");
@@ -10,9 +11,12 @@ export default function forgot_password() {
 
   const { post } = useApi();
 
+  const { forgotPassword } = authService;
+
+  // reset our state
   const handleSuccess = () => {
-    // reset our state
     setEmail("");
+
     // set success alert
     setAlert({
       type: "success",
@@ -20,14 +24,23 @@ export default function forgot_password() {
     });
   };
 
+  const handleError = (error) => {
+    setAlert(error);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // prevent default form submission
 
+    await forgotPassword(email, handleSuccess, handleError);
+
+    /*
     await post("auth/forgot-password", {
       data: { email },
       onSuccess: (res) => handleSuccess(),
       onFailure: (error) => setAlert(error),
     });
+
+    */
   };
 
   return (
