@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import "../styles/form.scss";
 import { Link } from "react-router-dom";
 import Alert from "../alert/alert";
-import { useApi } from "../../hooks/useApi";
+// import { useApi } from "../../hooks/useApi";
 
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import axios from "axios";
+
+import authService from "../../services/AuthService";
 
 export default function register() {
   const [firstName, setFirstName] = useState("");
@@ -16,12 +18,15 @@ export default function register() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [alert, setAlert] = useState({});
+
   const [phoneNumber, setPhoneNumber] = useState();
   const [country, setCountry] = useState("");
 
-  console.log("phone number", phoneNumber);
+  // console.log("phone number", phoneNumber);
 
-  const { post } = useApi();
+  // const { post } = useApi();
+
+  const { registerUser } = authService();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // prevents entire page from reloading after trigerring Submit
@@ -58,11 +63,22 @@ export default function register() {
       });
     };
 
+    const handleError = (error) => {
+      setAlert(error);
+    };
+
+    await registerUser(data, handleSuccess, handleError);
+
+    /*
+    
     await post("auth/local/register", {
       data: data,
       onSuccess: () => handleSuccess(),
-      onFailure: (error) => setAlert(error),
+      // onFailure: (error) => setAlert(error),
+      onFailure: (error) => handleError(error),
     });
+
+    */
   };
 
   const getUserLocation = async () => {
