@@ -70,7 +70,7 @@ export default function register() {
     await registerUser(data, handleSuccess, handleError);
 
     /*
-    
+
     await post("auth/local/register", {
       data: data,
       onSuccess: () => handleSuccess(),
@@ -84,7 +84,7 @@ export default function register() {
   const getUserLocation = async () => {
     try {
       const response = await axios.get("https://ipapi.co/json/");
-      console.log("location", response?.data);
+      // console.log("location", response?.data);
       setCountry(response?.data?.country_code);
     } catch (e) {
       console.error;
