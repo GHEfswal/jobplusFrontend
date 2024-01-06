@@ -4,11 +4,12 @@ import "./listings.scss";
 import Paginate from "../paginate/paginate";
 
 import { StarSaved, StarUnSaved, Money, Location, Timer } from "../images";
-import { useApi } from "../../hooks/useApi";
+// import { useApi } from "../../hooks/useApi";
 
 import ConfirmationModal from "../confirmation_modal/confirmation_modal";
+import jobService from "../../services/JobService";
 
-const MAX_PER_PAGE = 3;
+// const MAX_PER_PAGE = 3;
 const MAX_LENGTH_CHARS = 200;
 
 export default function listings() {
@@ -17,7 +18,8 @@ export default function listings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobToSave, setJobToSave] = useState(null);
 
-  const { get } = useApi();
+  // const { get } = useApi();
+  const { fetchJobs } = jobService();
 
   const handleSuccess = (res) => {
     const { entries, meta } = res.data;
@@ -32,6 +34,8 @@ export default function listings() {
     setMeta(meta);
   };
 
+  /* 
+
   const fetchJobs = async (page = 1) => {
     await get("jobs", {
       onSuccess: (res) => handleSuccess(res),
@@ -44,6 +48,8 @@ export default function listings() {
       },
     });
   };
+
+  */
 
   const truncate = (text, jobId) => {
     const job = jobs.find((job) => job.id === jobId);
@@ -82,14 +88,17 @@ export default function listings() {
   };
 
   useEffect(() => {
-    fetchJobs();
+    // fetchJobs();
+    const page = 1;
+    fetchJobs(page, handleSuccess);
   }, []);
 
   const handlePageChange = (pageNumber) => {
-    fetchJobs(pageNumber);
+    // fetchJobs(pageNumber);
+    fetchJobs(pageNumber, handleSuccess);
   };
 
-  // console.log(jobs);
+  console.log(jobs);
   // console.log(meta?.paginate?.totalPages);
   // const total = meta?.paginate?.totalPages;
 

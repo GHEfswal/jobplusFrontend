@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./sector.scss";
-import { useApi } from "../../hooks/useApi";
+// import { useApi } from "../../hooks/useApi";
 
 import { Link } from "react-router-dom";
+import sectorService from "../../services/SectorService";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -11,7 +12,8 @@ export default function sector() {
   const [subTitle, setSubTitle] = useState("");
   const [sectors, setSectors] = useState([]);
 
-  const { get } = useApi();
+  // const { get } = useApi();
+  const { fetchHomeSector } = sectorService();
 
   const handleSuccess = (res) => {
     const {
@@ -25,6 +27,8 @@ export default function sector() {
     setSectors(sectorArray);
   };
 
+  /*
+
   const fetchHomeSector = async () => {
     await get("home-sector", {
       onSuccess: (res) => handleSuccess(res),
@@ -36,8 +40,11 @@ export default function sector() {
     });
   };
 
+  */
+
   useEffect(() => {
-    fetchHomeSector();
+    // fetchHomeSector();
+    fetchHomeSector(handleSuccess);
   }, []);
 
   return (

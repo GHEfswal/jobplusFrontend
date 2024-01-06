@@ -10,6 +10,7 @@ export const useApi = () => {
   const token = getAuthCookie();
   if (token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios.defaults.headers.common["X-User-Id"] = 28;
   }
 
   const request = async (endpoint, options = {}) => {
