@@ -8,6 +8,7 @@ import { StarSaved, StarUnSaved, Money, Location, Timer } from "../images";
 
 import ConfirmationModal from "../confirmation_modal/confirmation_modal";
 import jobService from "../../services/JobService";
+import { Link } from "react-router-dom";
 
 // const MAX_PER_PAGE = 3;
 const MAX_LENGTH_CHARS = 200;
@@ -98,6 +99,14 @@ export default function listings() {
     fetchJobs(pageNumber, handleSuccess);
   };
 
+  const handleApplyForJob = async (jobId) => {
+    console.log("Applying for Job:", jobId);
+  };
+
+  const handleWithdrawApplication = async (jobId) => {
+    console.log("Withdrawing Application for Job:", jobId);
+  };
+
   console.log(jobs);
   // console.log(meta?.paginate?.totalPages);
   // const total = meta?.paginate?.totalPages;
@@ -161,9 +170,21 @@ export default function listings() {
                 </a>
               </p>
 
-              <a href="" className="listing__cta">
+              {/* <a href="" className="listing__cta">
                 Withdraw application
-              </a>
+              </a> */}
+              <Link
+                to="#"
+                className="listing__cta"
+                onClick={(e) => {
+                  e.preventDefault();
+                  job.hasApplied
+                    ? handleWithdrawApplication(job.Id)
+                    : handleApplyForJob(job.Id);
+                }}
+              >
+                <b>{job.hasApplied ? "Withdraw Application" : "Apply Now"}</b>
+              </Link>
             </div>
           );
         })}
