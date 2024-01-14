@@ -9,6 +9,9 @@ import { StarSaved, StarUnSaved, Money, Location, Timer } from "../images";
 import ConfirmationModal from "../confirmation_modal/confirmation_modal";
 import jobService from "../../services/JobService";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+
+import applyJobService from "../../services/AppliedJobService";
 
 // const MAX_PER_PAGE = 3;
 const MAX_LENGTH_CHARS = 200;
@@ -18,6 +21,9 @@ export default function listings() {
   const [meta, setMeta] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobToSave, setJobToSave] = useState(null);
+
+  const { applyForJob, withdrawApplication } = applyJobService();
+  const { getLoggedInUserId } = useAuth();
 
   // const { get } = useApi();
   const { fetchJobs } = jobService();
@@ -100,7 +106,21 @@ export default function listings() {
   };
 
   const handleApplyForJob = async (jobId) => {
-    console.log("Applying for Job:", jobId);
+    // console.log("Applying for Job:", jobId);
+    const data = {
+      job: jobId,
+      user: getLoggedInUserId(),
+    };
+
+    await applyForJob(data, (res) => {
+      const updatedJobs = jobs.map((job) => {
+        if (job.id === jobId) {
+          return { ...job, hasApplied: true };
+        }
+        return job;
+      });
+      setJobs(updatedJobs);
+    });
   };
 
   const handleWithdrawApplication = async (jobId) => {
@@ -179,8 +199,8 @@ export default function listings() {
                 onClick={(e) => {
                   e.preventDefault();
                   job.hasApplied
-                    ? handleWithdrawApplication(job.Id)
-                    : handleApplyForJob(job.Id);
+                    ? handleWithdrawApplication(job.id)
+                    : handleApplyForJob(job.id);
                 }}
               >
                 <b>{job.hasApplied ? "Withdraw Application" : "Apply Now"}</b>
