@@ -124,7 +124,21 @@ export default function listings() {
   };
 
   const handleWithdrawApplication = async (jobId) => {
-    console.log("Withdrawing Application for Job:", jobId);
+    // console.log("Withdrawing Application for Job:", jobId);
+    const data = {
+      jobId: jobId,
+      userId: getLoggedInUserId(),
+    };
+
+    await withdrawApplication(data, (res) => {
+      const updatedJobs = jobs.map((job) => {
+        if (job.id === jobId) {
+          return { ...job, hasApplied: false };
+        }
+        return job;
+      });
+      setJobs(updatedJobs);
+    });
   };
 
   console.log(jobs);
@@ -155,7 +169,6 @@ export default function listings() {
                   className="listing__saved"
                   src={StarUnSaved}
                   onClick={() => showModal(job)}
-                  alt=""
                 />
 
                 <p className="listing__company">
